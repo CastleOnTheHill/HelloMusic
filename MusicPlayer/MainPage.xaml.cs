@@ -31,6 +31,7 @@ namespace MusicPlayer
         {
             this.InitializeComponent();
             musicItemViewModel.Init();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
         private void addMusicLibFolder(object sender, RoutedEventArgs e)
@@ -46,7 +47,14 @@ namespace MusicPlayer
         private void PlayMusic(object sender, ItemClickEventArgs e)
         {
             musicItemViewModel.SelectedMusicItem = (Models.MusicItem)(e.ClickedItem);
-            Frame.Navigate(typeof(NewPage), "");
+            if(Frame.CanGoForward)
+            {
+                Frame.GoForward();
+            }
+            else
+            {
+                Frame.Navigate(typeof(NewPage));
+            }
             //MusicItem item = e.ClickedItem as MusicItem;
             //var stream = await item.File.OpenAsync(FileAccessMode.Read);
             //player.SetSource(stream, "");

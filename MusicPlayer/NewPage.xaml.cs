@@ -53,6 +53,7 @@ namespace MusicPlayer
         public NewPage()
         {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             viewModel = ViewModel.MusicItemViewModel.GetInstance();
             var mediaSource = MediaSource.CreateFromStorageFile(viewModel.SelectedMusicItem.File);
             mediaPlayer.Source = mediaSource;
@@ -87,6 +88,28 @@ namespace MusicPlayer
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.NavigationMode == NavigationMode.Forward)
+            {
+                if (viewModel.selectedMusicItem.Title != Title.Text)
+                {
+                    EllStoryboard.Stop();
+                    innerEllStoryboard.Stop();
+                    switchOff.Begin();
+                    mediaPlayer.Pause();
+                    DisplayButton.Label = "播放";
+                    DisplayButton.Icon = new SymbolIcon(Symbol.Play);
+                    mediaPlayer.Source = MediaSource.CreateFromStorageFile(viewModel.selectedMusicItem.File);
+                    Title.Text = viewModel.selectedMusicItem.Title;
+                    AlbumName.Text = viewModel.SelectedMusicItem.Album;
+                    ArtistName.Text = viewModel.SelectedMusicItem.Artist;
+                    innerPicture.ImageSource = viewModel.SelectedMusicItem.ImageSource;
+                    getLyric(Title.Text, ArtistName.Text);
+                    getTotalTime();
+                }
+            }
+        }
 
         public void DisplayButton_Click(object sender, RoutedEventArgs e)
         {
