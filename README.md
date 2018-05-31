@@ -44,4 +44,4 @@
    - `showMusicInFolder(StorageFolder folder)` :  将`folder`文件夹中的音乐文件放入`MusicItems`容器中以绑定显示。`showMusicInFolder(musicLib.folder)` 可获得全部音乐库中的所有音乐文件。
    - `addMusicLibFolder(void)` : 使用类似于`FilePicker` 的方式让用户选择文件夹，并添加到音乐库中。
    - `deleteMusicLibFolder(LibFolder folder)` ：删除音乐库中的`folder`文件夹(并不会删除本地文件)。
-   - `Init()` 用来加载用户上次启动已存在的音乐库文件夹到容器中，**只在页面初始化的时候调用**。
+   - `Init()` 用来加载用户上次启动已存在的音乐库文件夹到容器中，**只在页面初始化的时候调用**。"# HelloMusic" 
