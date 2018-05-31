@@ -55,15 +55,49 @@ namespace MusicPlayer
             {
                 Frame.Navigate(typeof(NewPage));
             }
-            //MusicItem item = e.ClickedItem as MusicItem;
-            //var stream = await item.File.OpenAsync(FileAccessMode.Read);
-            //player.SetSource(stream, "");
         }
 
         private void deleteMusicLibFolder(object sender, RoutedEventArgs e)
         {
             LibFolder lib = ShowFolder.SelectedItem as LibFolder;
             musicItemViewModel.deleteMusicLibFolder(lib);
+        }
+
+        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                List<MusicItem> showItems = new List<MusicItem>();
+                foreach (var item in musicItemViewModel.MusicItems)
+                {
+                    if (item.Title.Contains(sender.Text) || item.Artist.Contains(sender.Text) || item.Album.Contains(sender.Text))
+                    {
+                        showItems.Add(item);
+                    }
+                }
+                if(showItems.Count == 0)
+                {
+                    MusicItem item = new MusicItem("没有找到QAQ", "", "", null, null);
+                    showItems.Add(item);
+                }
+                sender.ItemsSource = showItems;
+            }
+        }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (args.ChosenSuggestion != null && (args.ChosenSuggestion as MusicItem).File != null)
+            {
+                musicItemViewModel.selectedMusicItem = args.ChosenSuggestion as MusicItem;
+                if(Frame.CanGoForward)
+                {
+                    Frame.GoForward();
+                }
+                else
+                {
+                    Frame.Navigate(typeof(NewPage));
+                }
+            }
         }
     }
 }

@@ -31,6 +31,9 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using MusicPlayer.Models;
 using MusicPlayer.ViewModel;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
+using Windows.UI.Notifications;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -72,6 +75,7 @@ namespace MusicPlayer
             innerPicture.ImageSource = viewModel.SelectedMusicItem.ImageSource;
             getLyric(Title.Text, ArtistName.Text);
             getTotalTime();
+            UpdatePrimaryTile();
         }
 
         public async void getTotalTime()
@@ -468,6 +472,40 @@ namespace MusicPlayer
             /// 歌词
             /// </summary>
             public Dictionary<double, string> LrcWord = new Dictionary<double, string>();
+        }
+
+        private void Share_click(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            DataRequest request = args.Request;
+            MusicItem item = viewModel.selectedMusicItem;
+            request.Data.SetText(item.Title);
+            List<StorageFile> files = new List<StorageFile>();
+            files.Add(item.File);
+            request.Data.SetStorageItems(files);
+            request.Data.Properties.Title = item.Title;
+            request.Data.Properties.Description = item.Album + " " + item.Artist;
+        }
+        public void UpdatePrimaryTile()
+        {
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(System.IO.File.ReadAllText("tile.xml"));
+            XmlNodeList textElements = document.GetElementsByTagName("text");
+            textElements[2].InnerText = viewModel.SelectedMusicItem.Title;
+            textElements[3].InnerText = viewModel.SelectedMusicItem.Artist;
+            textElements[4].InnerText = viewModel.SelectedMusicItem.Title;
+            textElements[5].InnerText = viewModel.SelectedMusicItem.Artist;
+            textElements[6].InnerText = viewModel.SelectedMusicItem.Title;
+            textElements[7].InnerText = viewModel.SelectedMusicItem.Artist;
+            var tileNotification = new TileNotification(document);
+            TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+            TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
+            TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueueForSquare310x310(true);
         }
     }
 }

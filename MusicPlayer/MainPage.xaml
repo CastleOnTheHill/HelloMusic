@@ -16,17 +16,60 @@
             <DataTemplate x:Key="FolderItem" x:DataType="data:LibFolder">
                 <TextBlock Text="{Binding FolderName}"/>
             </DataTemplate>
+            <DataTemplate x:Key="SearchShow" x:DataType="data:MusicItem">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Width="40" Height="40" Margin="5" Source="{Binding ImageSource}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Title}"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Artist}" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Album}" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
-        <AutoSuggestBox Grid.Row="0" IsEnabled="True" QueryIcon="Find" HorizontalAlignment="Right" MinWidth="500"></AutoSuggestBox>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="MyFolder" Text="我的歌单" Grid.Column="0" VerticalAlignment="Center" Margin="10,10,10,10"/>
+            <AutoSuggestBox  IsEnabled="True" 
+                             QueryIcon="Find" 
+                             Margin="10,10,10,10" 
+                             HorizontalAlignment="Right" 
+                             VerticalAlignment="Center" 
+                             MinWidth="300" 
+                             Grid.Column="2"
+                             PlaceholderText="搜索当前文件夹下的歌曲"
+                             TextChanged="AutoSuggestBox_TextChanged"  
+                             QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                             ItemTemplate="{StaticResource SearchShow}"
+                             TextMemberPath="Title"
+                             ></AutoSuggestBox>
+        </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
             <ListView x:Name="ShowFolder" Grid.Column="0" IsItemClickEnabled="True" ItemClick="OpenFolder" ItemTemplate="{StaticResource FolderItem}" ItemsSource="{x:Bind musicItemViewModel.LibFolders}"/>
             <ListView x:Name="ShowFile" Grid.Column="1" IsItemClickEnabled="True" ItemClick="PlayMusic" ItemTemplate="{StaticResource MusicItem}" ItemsSource="{x:Bind musicItemViewModel.MusicItems}"/>
@@ -34,8 +77,23 @@
     </Grid>
     <Page.BottomAppBar>
         <CommandBar>
+            <CommandBar.Content>
+                <RelativePanel>
+                    <Image x:Name="image" Source="Assets/cover.png" Width="40" Margin="5,5,5,5" ></Image>
+                    <Grid x:Name="grid" RelativePanel.RightOf="image">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="title" VerticalAlignment="Center" Grid.Row="0" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.selectedMusicItem.Title, Mode=OneWay}"/>
+                        <TextBlock x:Name="artist" VerticalAlignment="Center" Grid.Row="1" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.selectedMusicItem.Title, Mode=OneWay}"/>
+                    </Grid>
+                    <AppBarButton x:Name="VolumeButton" Tag="MusicInfo" Icon="Volume" RelativePanel.RightOf="grid" Style="{StaticResource VolumeButtonStyle}" ></AppBarButton>
+                    <Slider x:Name="Volume_ProcessBar" Minimum="0" Maximum="1" Value="1" StepFrequency="0.1" Width="100" Style="{StaticResource SliderStyle}" RelativePanel.RightOf="VolumeButton"></Slider>
+                </RelativePanel>
+            </CommandBar.Content>
             <AppBarButton x:Name="addFolder" Icon="Add" Click="addMusicLibFolder"/>
             <AppBarButton x:Name="deleteFolder" Icon="Delete" Click="deleteMusicLibFolder"/>
         </CommandBar>
-    </Page.BottomAppBar> 
+    </Page.BottomAppBar>
 </Page>
