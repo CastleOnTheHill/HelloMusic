@@ -8,9 +8,9 @@
     xmlns:data="using:MusicPlayer.Models"
     mc:Ignorable="d">
 
-    
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    <Grid Style="{StaticResource OriginPageBackgroundTheme}">
         <Grid.Resources>
             <DataTemplate x:Key="MusicItem" x:DataType="data:MusicItem">
                 <Grid>
@@ -125,8 +125,8 @@
                     </Grid>
                 </RelativePanel>
             </CommandBar.Content>
-            <AppBarButton x:Name="addFolder" Icon="Add" Click="addMusicLibFolder"/>
-            <AppBarButton x:Name="deleteFolder" Icon="Delete" Click="deleteMusicLibFolder"/>
+            <AppBarButton x:Name="addFolder" Icon="Add" Click="addMusicLibFolder" Style="{StaticResource AppBarButtonStyle}"/>
+            <AppBarButton x:Name="deleteFolder" Icon="Delete" Click="deleteMusicLibFolder" Style="{StaticResource AppBarButtonStyle}"/>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

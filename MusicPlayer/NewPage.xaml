@@ -20,12 +20,11 @@
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Name="LastSong" Icon="Previous" Click="ChangeMusicToLast"/>
+            <AppBarButton Name="LastSong" Icon="Previous" Label="上一首" Click="ChangeMusicToLast" Style="{StaticResource AppBarButtonStyle}"/>
             <AppBarButton Name= "DisplayButton" Icon="Play" Label="播放" Click="DisplayButton_Click" Style="{StaticResource DisplayButtonStyle}" ></AppBarButton>
-            <AppBarButton Name="NextSong" Icon="Next" Click="ChangeMusicToNext"/>
+            <AppBarButton Name="NextSong" Icon="Next" Label="下一首" Click="ChangeMusicToNext" Style="{StaticResource AppBarButtonStyle}"/>
             <AppBarButton Name= "StopButton" Icon="Stop" Label="停止" Click="StopButton_Click" Style="{StaticResource AppBarButtonStyle}"></AppBarButton>
-            <AppBarButton Name="share" Icon="Share" Click="Share_click" />
-            <AppBarButton Name= "OpenFileButton" Icon="OpenFile" Label="打开文件" Click="OpenFileButton_Click" Style="{StaticResource AppBarButtonStyle}"></AppBarButton>
+            <AppBarButton Name="share" Icon="Share" Click="Share_click" Label="分享" Style="{StaticResource AppBarButtonStyle}"/>
             <AppBarButton Name= "FullScreenButton" Icon="FullScreen" Label="全屏" Click="FullScreenButton_Click"></AppBarButton>
             <CommandBar.Content>
                 <RelativePanel>

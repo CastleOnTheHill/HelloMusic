@@ -15,6 +15,15 @@
             </Setter>
         </Style>
 
+        <Style x:Key="OriginPageBackgroundTheme" TargetType="Grid">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="Assets/Hello2.png"
+                        Stretch="UniformToFill" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontWeight" Value="Bold"/>

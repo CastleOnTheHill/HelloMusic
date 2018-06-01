@@ -506,7 +506,7 @@ namespace MusicPlayer
             DisplayButton.Label = "播放";
             DisplayButton.Icon = new SymbolIcon(Symbol.Play);
             mediaPlayer.Source = MediaSource.CreateFromStorageFile(viewModel.SelectedMusicItem.File);
-            getLyric(Title.Text, ArtistName.Text);
+            getLyric(viewModel.SelectedMusicItem.Title, viewModel.SelectedMusicItem.Artist);
             Bindings.Update();
         }
     }
