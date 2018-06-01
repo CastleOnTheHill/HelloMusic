@@ -8,13 +8,35 @@
     xmlns:data="using:MusicPlayer.Models"
     mc:Ignorable="d">
 
+    
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
             <DataTemplate x:Key="MusicItem" x:DataType="data:MusicItem">
-                <TextBlock Text="{Binding Title}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Source="{Binding ImageSource}" Width="50" Height="50"/>
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Title}" Padding="20,0,0,0"/>
+                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" Text="{Binding Artist}"/>
+                    <TextBlock Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Album}"/>
+                    <TextBlock Grid.Column="4" HorizontalAlignment="Right" Text="{Binding TotalTime}"/>
+                </Grid>
             </DataTemplate>
             <DataTemplate x:Key="FolderItem" x:DataType="data:LibFolder">
-                <TextBlock Text="{Binding FolderName}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Source="Assets/musicIcon.png" Width="50" Height="50"/>
+                    <TextBlock Grid.Column="1" Text="{Binding FolderName}" Padding="5,0,0,0"/>
+                </Grid>
             </DataTemplate>
             <DataTemplate x:Key="SearchShow" x:DataType="data:MusicItem">
                 <Grid>
@@ -71,25 +93,36 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
-            <ListView x:Name="ShowFolder" Grid.Column="0" IsItemClickEnabled="True" ItemClick="OpenFolder" ItemTemplate="{StaticResource FolderItem}" ItemsSource="{x:Bind musicItemViewModel.LibFolders}"/>
-            <ListView x:Name="ShowFile" Grid.Column="1" IsItemClickEnabled="True" ItemClick="PlayMusic" ItemTemplate="{StaticResource MusicItem}" ItemsSource="{x:Bind musicItemViewModel.MusicItems}"/>
+            <ListView x:Name="ShowFolder" Grid.Column="0" IsItemClickEnabled="True" ItemClick="OpenFolder" ItemTemplate="{StaticResource FolderItem}" ItemsSource="{x:Bind musicItemViewModel.LibFolders}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <ListView x:Name="ShowFile" Grid.Column="1" IsItemClickEnabled="True" ItemClick="PlayMusic" ItemTemplate="{StaticResource MusicItem}" ItemsSource="{x:Bind musicItemViewModel.MusicItems}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>                
+            </ListView>
         </Grid>
     </Grid>
     <Page.BottomAppBar>
         <CommandBar>
             <CommandBar.Content>
-                <RelativePanel>
-                    <Image x:Name="image" Source="Assets/cover.png" Width="40" Margin="5,5,5,5" ></Image>
-                    <Grid x:Name="grid" RelativePanel.RightOf="image">
+                <RelativePanel x:Name="commandBarPanel">
+                    <Image x:Name="image" Source="{x:Bind musicItemViewModel.SelectedMusicItem.ImageSource, Mode=OneWay}" Width="40" Margin="5,5,5,5" ></Image>
+                    <Grid x:Name="grid" RelativePanel.RightOf="image" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="title" VerticalAlignment="Center" Grid.Row="0" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.selectedMusicItem.Title, Mode=OneWay}"/>
-                        <TextBlock x:Name="artist" VerticalAlignment="Center" Grid.Row="1" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.selectedMusicItem.Title, Mode=OneWay}"/>
+                        <TextBlock x:Name="title" VerticalAlignment="Center" Grid.Row="0" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.SelectedMusicItem.Title,Mode=OneWay}"/>
+                        <TextBlock x:Name="artist" VerticalAlignment="Center" Grid.Row="1" Width="100" FontSize="12" Text="{x:Bind musicItemViewModel.SelectedMusicItem.Artist, Mode=OneWay}"/>
                     </Grid>
-                    <AppBarButton x:Name="VolumeButton" Tag="MusicInfo" Icon="Volume" RelativePanel.RightOf="grid" Style="{StaticResource VolumeButtonStyle}" ></AppBarButton>
-                    <Slider x:Name="Volume_ProcessBar" Minimum="0" Maximum="1" Value="1" StepFrequency="0.1" Width="100" Style="{StaticResource SliderStyle}" RelativePanel.RightOf="VolumeButton"></Slider>
                 </RelativePanel>
             </CommandBar.Content>
             <AppBarButton x:Name="addFolder" Icon="Add" Click="addMusicLibFolder"/>

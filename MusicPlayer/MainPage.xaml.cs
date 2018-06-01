@@ -39,6 +39,14 @@ namespace MusicPlayer
             musicItemViewModel.addMusicLibFolder();
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                Bindings.Update();
+            }
+        }
+
         private void OpenFolder(object sender, ItemClickEventArgs e)
         {
             musicItemViewModel.showMusicInFolder(((LibFolder)e.ClickedItem).StorageFolder);
@@ -47,6 +55,7 @@ namespace MusicPlayer
         private void PlayMusic(object sender, ItemClickEventArgs e)
         {
             musicItemViewModel.SelectedMusicItem = (Models.MusicItem)(e.ClickedItem);
+            Bindings.Update();
             if(Frame.CanGoForward)
             {
                 Frame.GoForward();
@@ -77,7 +86,7 @@ namespace MusicPlayer
                 }
                 if(showItems.Count == 0)
                 {
-                    MusicItem item = new MusicItem("没有找到QAQ", "", "", null, null);
+                    MusicItem item = new MusicItem("没有找到QAQ", "", "", "", null, null);
                     showItems.Add(item);
                 }
                 sender.ItemsSource = showItems;
@@ -88,7 +97,7 @@ namespace MusicPlayer
         {
             if (args.ChosenSuggestion != null && (args.ChosenSuggestion as MusicItem).File != null)
             {
-                musicItemViewModel.selectedMusicItem = args.ChosenSuggestion as MusicItem;
+                musicItemViewModel.SelectedMusicItem = args.ChosenSuggestion as MusicItem;
                 if(Frame.CanGoForward)
                 {
                     Frame.GoForward();

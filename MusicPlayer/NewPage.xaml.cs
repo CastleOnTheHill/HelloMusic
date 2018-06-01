@@ -52,7 +52,6 @@ namespace MusicPlayer
         public TimeSpan duration;
         //public MediaPlaybackSession mediaPlayBackSession = new MediaPlaybackSession();
 
-        string totaltime = "00:00";
         public NewPage()
         {
             this.InitializeComponent();
@@ -63,54 +62,21 @@ namespace MusicPlayer
             mediaSource.OpenOperationCompleted += MediaSource_OpenOperationCompleted;
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaplayerelement.SetMediaPlayer(mediaPlayer);
-            EllStoryboard.Stop();
-            innerEllStoryboard.Stop();
-            //totaltime = ((TimeSpan)mediaPlayer.Position).TotalSeconds.ToString();
-            Time.Text = totaltime;
-            //Volume_ProcessBar.PointerReleased += VolumeButtonPointerReleased;
+            //EllStoryboard.Stop();
+            //innerEllStoryboard.Stop();
             Volume_ProcessBar.AddHandler(PointerReleasedEvent, new PointerEventHandler(VolumeButtonPointerReleased), true);
-            Title.Text = viewModel.SelectedMusicItem.Title;
-            AlbumName.Text = viewModel.SelectedMusicItem.Album;
-            ArtistName.Text = viewModel.SelectedMusicItem.Artist;
-            innerPicture.ImageSource = viewModel.SelectedMusicItem.ImageSource;
             getLyric(Title.Text, ArtistName.Text);
-            getTotalTime();
             UpdatePrimaryTile();
-        }
-
-        public async void getTotalTime()
-        {
-            try
-            {
-                MusicProperties musicProperties = await viewModel.SelectedMusicItem.File.Properties.GetMusicPropertiesAsync();
-                string total = musicProperties.Duration.ToString();
-                Time.Text = total.Substring(3, 5);
-            }
-            catch (FileNotFoundException)
-            {
-
-            }
+            SelectedMusicItemChanged();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.NavigationMode == NavigationMode.Forward)
             {
-                if (viewModel.selectedMusicItem.Title != Title.Text)
+                if (viewModel.SelectedMusicItem.Title != Title.Text)
                 {
-                    EllStoryboard.Stop();
-                    innerEllStoryboard.Stop();
-                    switchOff.Begin();
-                    mediaPlayer.Pause();
-                    DisplayButton.Label = "播放";
-                    DisplayButton.Icon = new SymbolIcon(Symbol.Play);
-                    mediaPlayer.Source = MediaSource.CreateFromStorageFile(viewModel.selectedMusicItem.File);
-                    Title.Text = viewModel.selectedMusicItem.Title;
-                    AlbumName.Text = viewModel.SelectedMusicItem.Album;
-                    ArtistName.Text = viewModel.SelectedMusicItem.Artist;
-                    innerPicture.ImageSource = viewModel.SelectedMusicItem.ImageSource;
-                    getLyric(Title.Text, ArtistName.Text);
-                    getTotalTime();
+                    SelectedMusicItemChanged();
                 }
             }
         }
@@ -483,7 +449,7 @@ namespace MusicPlayer
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
-            MusicItem item = viewModel.selectedMusicItem;
+            MusicItem item = viewModel.SelectedMusicItem;
             request.Data.SetText(item.Title);
             List<StorageFile> files = new List<StorageFile>();
             files.Add(item.File);
@@ -506,6 +472,42 @@ namespace MusicPlayer
             TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
             TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
             TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueueForSquare310x310(true);
+        }
+
+        private void ChangeMusicToNext(object sender, RoutedEventArgs e)
+        {
+            int CurrPos = viewModel.MusicItems.IndexOf(viewModel.SelectedMusicItem);
+            int ModelSize = viewModel.MusicItems.Count();
+            int NextPos = (CurrPos + 1) % ModelSize;
+            if(DisplayOrderButton.Tag as string == "Random")
+            {
+                Random random = new Random();
+                NextPos = random.Next(ModelSize);
+            }
+            viewModel.SelectedMusicItem = viewModel.MusicItems.ElementAt(NextPos);
+            SelectedMusicItemChanged();
+        }
+
+        private void ChangeMusicToLast(object sender, RoutedEventArgs e)
+        {
+            int CurrPos = viewModel.MusicItems.IndexOf(viewModel.SelectedMusicItem);
+            int ModelSize = viewModel.MusicItems.Count();
+            int NextPos = (CurrPos - 1 + ModelSize) % ModelSize;
+            viewModel.SelectedMusicItem = viewModel.MusicItems.ElementAt(NextPos);
+            SelectedMusicItemChanged();
+        }
+
+        private void SelectedMusicItemChanged()
+        {
+            EllStoryboard.Stop();
+            innerEllStoryboard.Stop();
+            switchOff.Begin();
+            mediaPlayer.Pause();
+            DisplayButton.Label = "播放";
+            DisplayButton.Icon = new SymbolIcon(Symbol.Play);
+            mediaPlayer.Source = MediaSource.CreateFromStorageFile(viewModel.SelectedMusicItem.File);
+            getLyric(Title.Text, ArtistName.Text);
+            Bindings.Update();
         }
     }
 }

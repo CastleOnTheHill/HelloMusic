@@ -116,6 +116,8 @@
     <Content Include="Assets\background3.jpg" />
     <Content Include="Assets\circle.png" />
     <Content Include="Assets\cover.png" />
+    <Content Include="Assets\folder.png" />
+    <Content Include="Assets\musicIcon.png" />
     <Content Include="Assets\needle.png" />
     <Content Include="Assets\random.png" />
     <Content Include="Properties\Default.rd.xml" />

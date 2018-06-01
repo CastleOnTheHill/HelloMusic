@@ -12,16 +12,17 @@ using Windows.UI.Xaml.Media;
 using Windows.Storage.FileProperties;
 using System.IO;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.Streams;
 
 namespace MusicPlayer.ViewModel
 {
     public class MusicItemViewModel
     {
 
-        public Models.MusicItem selectedMusicItem = default(Models.MusicItem);
+        private Models.MusicItem selectedMusicItem = default(Models.MusicItem);
         public Models.MusicItem SelectedMusicItem { get { return selectedMusicItem; } set { this.selectedMusicItem = value; } }
 
-        public Models.LibFolder selectedFolderItem = default(Models.LibFolder);
+        private Models.LibFolder selectedFolderItem = default(Models.LibFolder);
         public Models.LibFolder SelectedFolderItem { get { return selectedFolderItem; } set { this.selectedFolderItem = value; } }
 
         private ObservableCollection<MusicItem> musicItems;
@@ -48,9 +49,9 @@ namespace MusicPlayer.ViewModel
             }
             return Instance;
         }
-        private void addMusicItem(string Title, string Artist, string Album, ImageSource imageSource, StorageFile file)
+        private void addMusicItem(string Title, string Artist, string Album, string TotalTime, ImageSource imageSource, StorageFile file)
         {
-            MusicItem musicItem = new MusicItem(Title, Artist, Album, imageSource, file);
+            MusicItem musicItem = new MusicItem(Title, Artist, Album, TotalTime, imageSource, file);
             musicItems.Add(musicItem);
         }
         private void addLibFolder(string name, StorageFolder folder)
@@ -70,12 +71,12 @@ namespace MusicPlayer.ViewModel
         public async void showMusicInFolder(StorageFolder folder)
         {
             musicItems.Clear();
-            QueryOptions queryOptions = new QueryOptions(CommonFileQuery.OrderByTitle, new string[] { ".mp3", ".wma" });
+            QueryOptions queryOptions = new QueryOptions(CommonFileQuery.OrderByTitle, new string[] { ".mp3", ".flac", ".wma" });
             queryOptions.FolderDepth = FolderDepth.Deep;
             var files = await folder.CreateFileQueryWithOptions(queryOptions).GetFilesAsync();
             foreach (var file in files)
             {
-                string title = "", artist = "", album = "";
+                string title = "", artist = "", album = "", totalTime = "";
                 ImageSource image = null;
                 using (StorageItemThumbnail thumbnail = await file.GetThumbnailAsync(ThumbnailMode.MusicView, 300))
                 {
@@ -92,7 +93,17 @@ namespace MusicPlayer.ViewModel
                     title = musicProperties.Title;
                     artist = musicProperties.Artist;
                     album = musicProperties.Album;
-                    addMusicItem(title, artist, album, image, file);
+                    string total = musicProperties.Duration.ToString();
+                    totalTime = total.Substring(3, 5);
+                    if (image == null)
+                    {
+                        StorageFile imagefile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(("ms-appx:///Assets/cover.png")));
+                        IRandomAccessStream ir = await imagefile.OpenAsync(FileAccessMode.Read);
+                        BitmapImage bi = new BitmapImage();
+                        await bi.SetSourceAsync(ir);
+                        image = bi;
+                    }
+                    addMusicItem(title, artist, album, totalTime, image, file);
                 }
                 catch (FileNotFoundException)
                 {

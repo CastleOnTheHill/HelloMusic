@@ -20,7 +20,9 @@
 
     <Page.BottomAppBar>
         <CommandBar>
+            <AppBarButton Name="LastSong" Icon="Previous" Click="ChangeMusicToLast"/>
             <AppBarButton Name= "DisplayButton" Icon="Play" Label="播放" Click="DisplayButton_Click" Style="{StaticResource DisplayButtonStyle}" ></AppBarButton>
+            <AppBarButton Name="NextSong" Icon="Next" Click="ChangeMusicToNext"/>
             <AppBarButton Name= "StopButton" Icon="Stop" Label="停止" Click="StopButton_Click" Style="{StaticResource AppBarButtonStyle}"></AppBarButton>
             <AppBarButton Name="share" Icon="Share" Click="Share_click" />
             <AppBarButton Name= "OpenFileButton" Icon="OpenFile" Label="打开文件" Click="OpenFileButton_Click" Style="{StaticResource AppBarButtonStyle}"></AppBarButton>
@@ -29,7 +31,7 @@
                 <RelativePanel>
                     <TextBlock x:Name="CurrentTime" Style="{StaticResource TextBlockStyle}" Text="00:00" Margin="10,1,5,10" RelativePanel.AlignVerticalCenterWithPanel="True"></TextBlock>
                     <Slider x:Name="Display_ProcessBar" Width="400" Style="{StaticResource SliderStyle}" RelativePanel.RightOf="CurrentTime" Value="{x:Bind mediaPlayer.Position, Converter={StaticResource mc},Mode=TwoWay}"></Slider>
-                    <TextBlock x:Name ="Time" Text="00:00" RelativePanel.RightOf="Display_ProcessBar" Style="{StaticResource TextBlockStyle}" RelativePanel.AlignVerticalCenterWith="Display_ProcessBar"></TextBlock>
+                    <TextBlock x:Name ="Time" Text="{x:Bind viewModel.SelectedMusicItem.TotalTime, Mode=OneWay}" RelativePanel.RightOf="Display_ProcessBar" Style="{StaticResource TextBlockStyle}" RelativePanel.AlignVerticalCenterWith="Display_ProcessBar"></TextBlock>
                     <AppBarButton x:Name="VolumeButton" Tag="MusicInfo" Icon="Volume" RelativePanel.RightOf="Time"  Style="{StaticResource VolumeButtonStyle}" Click="VolumeButton_Click"></AppBarButton>
                     <Slider x:Name="Volume_ProcessBar" Minimum="0" Maximum="1" Value="1" StepFrequency="0.1" Width="100" Style="{StaticResource SliderStyle}" RelativePanel.RightOf="VolumeButton" ValueChanged="Volume_ValueChanged"></Slider>
                     <AppBarButton x:Name="DisplayOrderButton" Tag="Circle" Click="DisplayOrderButton_Click" RelativePanel.RightOf="Volume_ProcessBar" Background="Transparent" Style="{StaticResource DisplayOrderButtonStyle}">
@@ -80,21 +82,21 @@
                     </Storyboard>
                 </Ellipse.Resources>
                 <Ellipse.Fill>
-                    <ImageBrush x:Name="innerPicture" ImageSource="Assets/background9.jpg" />
+                    <ImageBrush x:Name="innerPicture" ImageSource="{x:Bind viewModel.SelectedMusicItem.ImageSource, Mode=OneWay}" />
                 </Ellipse.Fill>
             </Ellipse>
         </Grid>
         <MediaPlayerElement Width="600" Height="400" x:Name="mediaplayerelement" AutoPlay="False" AreTransportControlsEnabled="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="2"></MediaPlayerElement>
         <Grid Grid.Column="1">
             <Grid Width="400" Height="600" Background="Transparent" Margin="50,30,0,0" x:Name="Message">
-                <TextBlock x:Name="Title" Width="200" Height="50" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20"></TextBlock>
+                <TextBlock x:Name="Title" Text="{x:Bind viewModel.SelectedMusicItem.Title}" Width="200" Height="50" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="20"></TextBlock>
                 <RelativePanel>
                     <TextBlock x:Name="Album" Width="40" Height="50" Text="专辑:" VerticalAlignment="Top" Margin="0, 40,0,0" HorizontalAlignment="Left"></TextBlock>
-                    <TextBlock x:Name="AlbumName" Width="150" Height="50" RelativePanel.RightOf="Album" RelativePanel.AlignVerticalCenterWith="Album" Margin="0,40,0,0"></TextBlock>
+                    <TextBlock x:Name="AlbumName" Text="{x:Bind viewModel.SelectedMusicItem.Album, Mode=OneWay}" Width="150" Height="50" RelativePanel.RightOf="Album" RelativePanel.AlignVerticalCenterWith="Album" Margin="0,40,0,0"></TextBlock>
                 </RelativePanel>
                 <RelativePanel Margin="200,0,0,0">
                     <TextBlock x:Name="Artist" Width="40" Height="50" Text="歌手:" VerticalAlignment="Top" Margin="0,40,0,0" HorizontalAlignment="Left"></TextBlock>
-                    <TextBlock x:Name="ArtistName" Width="150" Height="50" RelativePanel.RightOf="Artist" RelativePanel.AlignVerticalCenterWith="Artist" Margin="0,40,0,0"></TextBlock>
+                    <TextBlock x:Name="ArtistName" Text="{x:Bind viewModel.SelectedMusicItem.Artist,Mode=OneWay}" Width="150" Height="50" RelativePanel.RightOf="Artist" RelativePanel.AlignVerticalCenterWith="Artist" Margin="0,40,0,0"></TextBlock>
                 </RelativePanel>
                 <Grid Height="300" Margin="0,100,0,0" VerticalAlignment="Top">
                     <ScrollViewer>
